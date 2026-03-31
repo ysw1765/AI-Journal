@@ -1,0 +1,458 @@
+openapi: 3.0.3
+info:
+  title: AI Diary API
+  version: 1.0.0
+  description: |
+    AI 日记本后端接口定义。
+    典型流程：
+    1. 上传图片
+    2. AI 分析图片
+    3. 基于图片开启聊天
+    4. 结束聊天并生成日记
+    5. 查询历史日记
+servers:
+  - url: http://localhost:8000/api/v1
+tags:
+  - name: Auth
+  - name: Upload
+  - name: AI
+  - name: Chat
+  - name: Diary
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: ok
+        data:
+          nullable: true
+
+    ImageUploadResponse:
+      type: object
+      properties:
+        image_id:
+          type: string
+          format: uuid
+        image_url:
+          type: string
+        mime_type:
+          type: string
+        size_bytes:
+          type: integer
+
+    ImageAnalysisResponse:
+      type: object
+      properties:
+        analysis_id:
+          type: string
+          format: uuid
+        summary:
+          type: string
+        detected_objects:
+          type: array
+          items:
+            type: string
+        scene_tags:
+          type: array
+          items:
+            type: string
+        emotion_tags:
+          type: array
+          items:
+            type: string
+        raw_result:
+          type: object
+
+    CreateChatSessionRequest:
+      type: object
+      required: [image_id]
+      properties:
+        image_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+
+    CreateChatSessionResponse:
+      type: object
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: active
+
+    SendMessageRequest:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+        stream:
+          type: boolean
+          default: false
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+        sequence_no:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    EndChatResponse:
+      type: object
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        diary_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+
+    DiaryItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        diary_date:
+          type: string
+          format: date
+        cover_image_url:
+          type: string
+        mood:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+
+    DiaryDetail:
+      allOf:
+        - $ref: '#/components/schemas/DiaryItem'
+        - type: object
+          properties:
+            content:
+              type: string
+            image_id:
+              type: string
+              format: uuid
+            session_id:
+              type: string
+              format: uuid
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: 注册
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: ok
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: 登录
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: ok
+
+  /uploads/images:
+    post:
+      tags: [Upload]
+      summary: 上传图片
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: 上传成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageUploadResponse'
+
+  /ai/images/{image_id}/analyze:
+    post:
+      tags: [AI]
+      summary: 分析图片
+      parameters:
+        - name: image_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 分析成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAnalysisResponse'
+
+  /chat/sessions:
+    post:
+      tags: [Chat]
+      summary: 创建会话
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChatSessionRequest'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateChatSessionResponse'
+
+  /chat/sessions/{session_id}/messages:
+    post:
+      tags: [Chat]
+      summary: 发送消息并获取 AI 回复
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessageRequest'
+      responses:
+        '200':
+          description: 非流式回复
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_message:
+                    $ref: '#/components/schemas/ChatMessage'
+                  assistant_message:
+                    $ref: '#/components/schemas/ChatMessage'
+
+  /chat/sessions/{session_id}/messages/ws:
+    get:
+      tags: [Chat]
+      summary: WebSocket 聊天入口
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '101':
+          description: Switching Protocols
+
+  /chat/sessions/{session_id}:
+    get:
+      tags: [Chat]
+      summary: 获取会话详情和消息列表
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ok
+
+  /chat/sessions/{session_id}/end:
+    post:
+      tags: [Chat]
+      summary: 结束聊天并生成日记
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 已生成日记
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndChatResponse'
+
+  /diaries:
+    get:
+      tags: [Diary]
+      summary: 获取日记列表
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: keyword
+          in: query
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: ok
+
+  /diaries/{diary_id}:
+    get:
+      tags: [Diary]
+      summary: 获取日记详情
+      parameters:
+        - name: diary_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiaryDetail'
+
+    put:
+      tags: [Diary]
+      summary: 编辑日记
+      parameters:
+        - name: diary_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                mood:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: ok
+
+    delete:
+      tags: [Diary]
+      summary: 删除日记（软删除）
+      parameters:
+        - name: diary_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ok

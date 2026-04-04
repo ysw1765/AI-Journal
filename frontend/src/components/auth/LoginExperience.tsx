@@ -1,19 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Plus_Jakarta_Sans, Sora } from "next/font/google";
+import { Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import { useState, type Dispatch, type FormEvent, type SetStateAction } from "react";
 import styles from "./LoginExperience.module.css";
 
-const bodyFont = Plus_Jakarta_Sans({
+const bodyFont = Noto_Sans_SC({
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
   variable: "--login-font-body",
 });
 
-const headlineFont = Sora({
+const headlineFont = Noto_Serif_SC({
   subsets: ["latin"],
+  weight: ["400", "600", "700"],
   variable: "--login-font-headline",
 });
+
+const moodTags = ["晨光", "私密", "灵感"] as const;
+
+type LoginFormProps = {
+  showPassword: boolean;
+  setShowPassword: Dispatch<SetStateAction<boolean>>;
+};
+
+type InputFieldProps = {
+  label: string;
+  type: "email" | "password";
+  placeholder: string;
+  autoComplete: string;
+  showPassword?: boolean;
+  onTogglePassword?: () => void;
+};
+
+type DividerProps = {
+  text: string;
+};
 
 export function LoginExperience() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,86 +43,141 @@ export function LoginExperience() {
   return (
     <div className={`${styles.scene} ${bodyFont.variable} ${headlineFont.variable}`}>
       <div className={styles.backdrop} aria-hidden="true">
-        <div className={styles.backdropGlow} />
-        <div className={styles.backdropGlowSoft} />
-        <div className={styles.paperDust} />
+        <span className={styles.auroraBlobPrimary} />
+        <span className={styles.auroraBlobSecondary} />
+        <span className={styles.auroraBlobTertiary} />
+        <span className={styles.auroraWave} />
+        <span className={styles.backdropNoise} />
       </div>
 
       <section className={styles.card}>
-        <div className={styles.brandBadge} aria-hidden="true">
-          <span>ai</span>
-        </div>
+        <div className={styles.cardGlow} aria-hidden="true" />
 
-        <div className={styles.copyBlock}>
-          <p className={styles.eyebrow}>AI Diary</p>
-          <h1 className={styles.title}>回到属于你的记录空间</h1>
-          <p className={styles.subtitle}>
-            把今天的心情、想法和片段，轻轻放回这里
-          </p>
-          <p className={styles.signupHint}>
-            还没有账号？
-            <Link href="#" className={styles.inlineLink}>
-              立即注册
-            </Link>
-          </p>
-        </div>
+        <header className={styles.header}>
+          <div className={styles.brandCluster}>
+            <div className={styles.brandBadge} aria-hidden="true">
+              <span>日</span>
+            </div>
 
-        <form className={styles.form} onSubmit={(event) => event.preventDefault()}>
-          <label className={styles.field}>
-            <span className={styles.srOnly}>邮箱</span>
-            <input
-              type="email"
-              placeholder="请输入邮箱"
-              autoComplete="email"
-              className={styles.input}
-            />
-          </label>
-
-          <label className={`${styles.field} ${styles.passwordField}`}>
-            <span className={styles.srOnly}>密码</span>
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="请输入密码"
-              autoComplete="current-password"
-              className={styles.input}
-            />
-            <button
-              type="button"
-              aria-label={showPassword ? "隐藏密码" : "显示密码"}
-              className={styles.eyeButton}
-              onClick={() => setShowPassword((value) => !value)}
-            >
-              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-            </button>
-          </label>
-
-          <div className={styles.utilityRow}>
-            <label className={styles.checkboxLabel}>
-              <input type="checkbox" className={styles.checkbox} />
-              <span>记住我</span>
-            </label>
-
-            <Link href="#" className={styles.inlineLink}>
-              忘记密码？
-            </Link>
+            <div className={styles.brandCopy}>
+              <p className={styles.brandLabel}>AI Diary</p>
+              <p className={styles.brandNote}>晨光模式 · 私密登录</p>
+            </div>
           </div>
 
-          <button type="submit" className={styles.primaryButton}>
-            登录
-          </button>
-        </form>
+          <span className={styles.statusPill}>暖色流光</span>
+        </header>
 
-        <div className={styles.divider}>
-          <span />
-          <strong>或</strong>
-          <span />
-        </div>
-
-        <button type="button" className={styles.secondaryButton}>
-          使用单点登录
-        </button>
+        <CopyBlock />
+        <LoginForm showPassword={showPassword} setShowPassword={setShowPassword} />
+        <Divider text="或" />
+        <SSOButton />
       </section>
     </div>
+  );
+}
+
+function CopyBlock() {
+  return (
+    <div className={styles.copyBlock}>
+      <p className={styles.eyebrow}>日记空间</p>
+      <h1 className={styles.title}>回到属于你的记录空间</h1>
+      <p className={styles.subtitle}>把今天的心情、想法和片段，轻轻放回这里。</p>
+
+      <div className={styles.moodRow} aria-hidden="true">
+        {moodTags.map((tag) => (
+          <span key={tag} className={styles.moodChip}>
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      <p className={styles.signupHint}>
+        还没有账号？
+        <Link href="#" className={styles.inlineLink}>
+          立即注册
+        </Link>
+      </p>
+    </div>
+  );
+}
+
+function LoginForm({ showPassword, setShowPassword }: LoginFormProps) {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
+  return (
+    <form className={styles.form} onSubmit={handleSubmit}>
+      <InputField type="email" placeholder="请输入邮箱" autoComplete="email" label="邮箱" />
+      <InputField
+        type="password"
+        placeholder="请输入密码"
+        autoComplete="current-password"
+        label="密码"
+        showPassword={showPassword}
+        onTogglePassword={() => setShowPassword((value) => !value)}
+      />
+
+      <div className={styles.utilityRow}>
+        <label className={styles.checkboxLabel}>
+          <input type="checkbox" className={styles.checkbox} />
+          <span>记住我</span>
+        </label>
+
+        <Link href="#" className={styles.inlineLink}>
+          忘记密码？
+        </Link>
+      </div>
+
+      <button type="submit" className={styles.primaryButton}>
+        登录
+      </button>
+    </form>
+  );
+}
+
+function InputField({
+  type,
+  placeholder,
+  autoComplete,
+  label,
+  showPassword,
+  onTogglePassword,
+}: InputFieldProps) {
+  return (
+    <label className={`${styles.field} ${type === "password" ? styles.passwordField : ""}`}>
+      <span className={styles.srOnly}>{label}</span>
+      <input type={type} placeholder={placeholder} autoComplete={autoComplete} className={styles.input} />
+      {type === "password" ? (
+        <button
+          type="button"
+          aria-label={showPassword ? "隐藏密码" : "显示密码"}
+          className={styles.eyeButton}
+          onClick={onTogglePassword}
+        >
+          {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+        </button>
+      ) : null}
+    </label>
+  );
+}
+
+function Divider({ text }: DividerProps) {
+  return (
+    <div className={styles.divider}>
+      <span />
+      <strong>{text}</strong>
+      <span />
+    </div>
+  );
+}
+
+function SSOButton() {
+  return (
+    <button type="button" className={styles.secondaryButton}>
+      使用单点登录
+    </button>
   );
 }
 

@@ -15,93 +15,90 @@ const headlineFont = Sora({
   variable: "--login-font-headline",
 });
 
-const patternCells = Array.from({ length: 18 }, (_, index) => index);
-
 export function LoginExperience() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className={`${styles.scene} ${bodyFont.variable} ${headlineFont.variable}`}>
-      <div className={styles.backdropGlow} />
-      <section className={styles.shell}>
-        <div className={styles.formPane}>
-          <div className={styles.brandBadge} aria-hidden="true">
-            <span>ai</span>
-          </div>
+      <div className={styles.backdrop} aria-hidden="true">
+        <div className={styles.backdropGlow} />
+        <div className={styles.backdropGlowSoft} />
+        <div className={styles.paperDust} />
+      </div>
 
-          <div className={styles.copyBlock}>
-            <h1 className={styles.title}>Welcome back!</h1>
-            <p className={styles.subtitle}>
-              Don&apos;t have an account yet?{" "}
-              <Link href="#" className={styles.inlineLink}>
-                Sign up now
-              </Link>
-            </p>
-          </div>
+      <section className={styles.card}>
+        <div className={styles.brandBadge} aria-hidden="true">
+          <span>ai</span>
+        </div>
 
-          <form className={styles.form} onSubmit={(event) => event.preventDefault()}>
-            <label className={styles.field}>
-              <span className={styles.srOnly}>Email address</span>
-              <input
-                type="email"
-                placeholder="Email address"
-                autoComplete="email"
-                className={styles.input}
-              />
-            </label>
+        <div className={styles.copyBlock}>
+          <p className={styles.eyebrow}>AI Diary</p>
+          <h1 className={styles.title}>回到属于你的记录空间</h1>
+          <p className={styles.subtitle}>
+            把今天的心情、想法和片段，轻轻放回这里
+          </p>
+          <p className={styles.signupHint}>
+            还没有账号？
+            <Link href="#" className={styles.inlineLink}>
+              立即注册
+            </Link>
+          </p>
+        </div>
 
-            <label className={`${styles.field} ${styles.passwordField}`}>
-              <span className={styles.srOnly}>Password</span>
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                autoComplete="current-password"
-                className={styles.input}
-              />
-              <button
-                type="button"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className={styles.eyeButton}
-                onClick={() => setShowPassword((value) => !value)}
-              >
-                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-              </button>
-            </label>
+        <form className={styles.form} onSubmit={(event) => event.preventDefault()}>
+          <label className={styles.field}>
+            <span className={styles.srOnly}>邮箱</span>
+            <input
+              type="email"
+              placeholder="请输入邮箱"
+              autoComplete="email"
+              className={styles.input}
+            />
+          </label>
 
-            <div className={styles.utilityRow}>
-              <label className={styles.checkboxLabel}>
-                <input type="checkbox" className={styles.checkbox} />
-                <span>Remember me</span>
-              </label>
-
-              <Link href="#" className={styles.inlineLink}>
-                Forgot password?
-              </Link>
-            </div>
-
-            <button type="submit" className={styles.primaryButton}>
-              Log in
+          <label className={`${styles.field} ${styles.passwordField}`}>
+            <span className={styles.srOnly}>密码</span>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="请输入密码"
+              autoComplete="current-password"
+              className={styles.input}
+            />
+            <button
+              type="button"
+              aria-label={showPassword ? "隐藏密码" : "显示密码"}
+              className={styles.eyeButton}
+              onClick={() => setShowPassword((value) => !value)}
+            >
+              {showPassword ? <EyeOffIcon /> : <EyeIcon />}
             </button>
-          </form>
+          </label>
 
-          <div className={styles.divider}>
-            <span />
-            <strong>OR</strong>
-            <span />
+          <div className={styles.utilityRow}>
+            <label className={styles.checkboxLabel}>
+              <input type="checkbox" className={styles.checkbox} />
+              <span>记住我</span>
+            </label>
+
+            <Link href="#" className={styles.inlineLink}>
+              忘记密码？
+            </Link>
           </div>
 
-          <button type="button" className={styles.secondaryButton}>
-            Log in with SSO
+          <button type="submit" className={styles.primaryButton}>
+            登录
           </button>
+        </form>
+
+        <div className={styles.divider}>
+          <span />
+          <strong>或</strong>
+          <span />
         </div>
 
-        <div className={styles.patternPane} aria-hidden="true">
-          <div className={styles.patternGrid}>
-            {patternCells.map((cell) => (
-              <div key={cell} className={styles.patternCell} />
-            ))}
-          </div>
-        </div>
+        <button type="button" className={styles.secondaryButton}>
+          使用单点登录
+        </button>
       </section>
     </div>
   );

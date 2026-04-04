@@ -1,9 +1,13 @@
 import { NeuralChatExperience } from "@/components/chat/NeuralChatExperience";
 
-export default function ChatSessionPage({
+type ChatSessionPageProps = {
+  params: Promise<{ sessionId: string }>;
+};
+
+export default async function ChatSessionPage({
   params,
-}: {
-  params: { sessionId: string };
-}) {
-  return <NeuralChatExperience sessionId={params.sessionId} />;
+}: ChatSessionPageProps) {
+  const { sessionId } = await params;
+
+  return <NeuralChatExperience sessionId={sessionId} />;
 }

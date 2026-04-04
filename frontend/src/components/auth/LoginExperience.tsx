@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
 import { useState, type Dispatch, type FormEvent, type SetStateAction } from "react";
+import { apiFetch } from "@/lib/api";
+import { setAccessToken } from "@/lib/auth";
 import styles from "./LoginExperience.module.css";
 
 const bodyFont = Noto_Sans_SC({
@@ -26,15 +29,23 @@ type LoginFormProps = {
 
 type InputFieldProps = {
   label: string;
+  name: string;
   type: "email" | "password";
   placeholder: string;
   autoComplete: string;
   showPassword?: boolean;
   onTogglePassword?: () => void;
+  disabled?: boolean;
 };
 
 type DividerProps = {
   text: string;
+};
+
+type LoginResponse = {
+  access_token: string;
+  token_type: string;
+  expires_at: string;
 };
 
 export function LoginExperience() {
@@ -103,25 +114,67 @@ function CopyBlock() {
 }
 
 function LoginForm({ showPassword, setShowPassword }: LoginFormProps) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+    const rememberMe = formData.get("rememberMe") === "on";
+
+    if (!email || !password) {
+      setErrorMessage("请输入邮箱和密码");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await apiFetch<LoginResponse>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+
+      setAccessToken(response.access_token, rememberMe);
+      router.replace("/upload");
+      router.refresh();
+    } catch (error) {
+      const message =
+        error instanceof Error && /401|403/.test(error.message)
+          ? "邮箱或密码不正确"
+          : "登录失败，请稍后重试";
+      setErrorMessage(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <InputField type="email" placeholder="请输入邮箱" autoComplete="email" label="邮箱" />
+    <form className={styles.form} onSubmit={handleSubmit} aria-busy={isSubmitting}>
+      <InputField type="email" name="email" placeholder="请输入邮箱" autoComplete="email" label="邮箱" />
       <InputField
         type="password"
+        name="password"
         placeholder="请输入密码"
         autoComplete="current-password"
         label="密码"
         showPassword={showPassword}
         onTogglePassword={() => setShowPassword((value) => !value)}
+        disabled={isSubmitting}
       />
 
       <div className={styles.utilityRow}>
         <label className={styles.checkboxLabel}>
-          <input type="checkbox" className={styles.checkbox} />
+          <input type="checkbox" name="rememberMe" className={styles.checkbox} disabled={isSubmitting} />
           <span>记住我</span>
         </label>
 
@@ -130,8 +183,14 @@ function LoginForm({ showPassword, setShowPassword }: LoginFormProps) {
         </Link>
       </div>
 
-      <button type="submit" className={styles.primaryButton}>
-        登录
+      {errorMessage ? (
+        <p className={styles.formError} role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      <button type="submit" className={styles.primaryButton} disabled={isSubmitting}>
+        {isSubmitting ? "登录中..." : "登录"}
       </button>
     </form>
   );
@@ -139,22 +198,32 @@ function LoginForm({ showPassword, setShowPassword }: LoginFormProps) {
 
 function InputField({
   type,
+  name,
   placeholder,
   autoComplete,
   label,
   showPassword,
   onTogglePassword,
+  disabled,
 }: InputFieldProps) {
   return (
     <label className={`${styles.field} ${type === "password" ? styles.passwordField : ""}`}>
       <span className={styles.srOnly}>{label}</span>
-      <input type={type} placeholder={placeholder} autoComplete={autoComplete} className={styles.input} />
+      <input
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className={styles.input}
+        disabled={disabled}
+      />
       {type === "password" ? (
         <button
           type="button"
           aria-label={showPassword ? "隐藏密码" : "显示密码"}
           className={styles.eyeButton}
           onClick={onTogglePassword}
+          disabled={disabled}
         >
           {showPassword ? <EyeOffIcon /> : <EyeIcon />}
         </button>

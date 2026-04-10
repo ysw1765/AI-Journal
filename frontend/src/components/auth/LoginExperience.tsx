@@ -20,8 +20,6 @@ const headlineFont = Noto_Serif_SC({
   variable: "--login-font-headline",
 });
 
-const moodTags = ["晨光", "私密", "灵感"] as const;
-
 type LoginFormProps = {
   showPassword: boolean;
   setShowPassword: Dispatch<SetStateAction<boolean>>;
@@ -33,13 +31,12 @@ type InputFieldProps = {
   type: "email" | "password";
   placeholder: string;
   autoComplete: string;
+  value?: string;
+  onChange?: (value: string) => void;
   showPassword?: boolean;
   onTogglePassword?: () => void;
+  showToggle?: boolean;
   disabled?: boolean;
-};
-
-type DividerProps = {
-  text: string;
 };
 
 type LoginResponse = {
@@ -70,19 +67,22 @@ export function LoginExperience() {
               <span>日</span>
             </div>
 
-            <div className={styles.brandCopy}>
-              <p className={styles.brandLabel}>AI Diary</p>
-              <p className={styles.brandNote}>晨光模式 · 私密登录</p>
-            </div>
+            <p className={styles.brandLabel}>AI Diary</p>
           </div>
-
-          <span className={styles.statusPill}>暖色流光</span>
         </header>
 
         <CopyBlock />
         <LoginForm showPassword={showPassword} setShowPassword={setShowPassword} />
-        <Divider text="或" />
-        <SSOButton />
+
+        <div className={styles.bottomActions}>
+          <Link href="#" className={styles.bottomLink}>
+            注册
+          </Link>
+
+          <button type="button" className={styles.bottomButton}>
+            单点登录
+          </button>
+        </div>
       </section>
     </div>
   );
@@ -91,32 +91,24 @@ export function LoginExperience() {
 function CopyBlock() {
   return (
     <div className={styles.copyBlock}>
-      <p className={styles.eyebrow}>日记空间</p>
-      <h1 className={styles.title}>回到属于你的记录空间</h1>
-      <p className={styles.subtitle}>把今天的心情、想法和片段，轻轻放回这里。</p>
-
-      <div className={styles.moodRow} aria-hidden="true">
-        {moodTags.map((tag) => (
-          <span key={tag} className={styles.moodChip}>
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <p className={styles.signupHint}>
-        还没有账号？
-        <Link href="#" className={styles.inlineLink}>
-          立即注册
-        </Link>
-      </p>
+      <h1 className={styles.title}>记录，如此简单</h1>
     </div>
   );
 }
 
 function LoginForm({ showPassword, setShowPassword }: LoginFormProps) {
   const router = useRouter();
+  const [passwordValue, setPasswordValue] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handlePasswordChange = (value: string) => {
+    setPasswordValue(value);
+
+    if (!value) {
+      setShowPassword(false);
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -167,8 +159,11 @@ function LoginForm({ showPassword, setShowPassword }: LoginFormProps) {
         placeholder="请输入密码"
         autoComplete="current-password"
         label="密码"
+        value={passwordValue}
+        onChange={handlePasswordChange}
         showPassword={showPassword}
         onTogglePassword={() => setShowPassword((value) => !value)}
+        showToggle={passwordValue.length > 0}
         disabled={isSubmitting}
       />
 
@@ -202,22 +197,27 @@ function InputField({
   placeholder,
   autoComplete,
   label,
+  value,
+  onChange,
   showPassword,
   onTogglePassword,
+  showToggle,
   disabled,
 }: InputFieldProps) {
   return (
     <label className={`${styles.field} ${type === "password" ? styles.passwordField : ""}`}>
       <span className={styles.srOnly}>{label}</span>
       <input
-        type={type}
+        type={type === "password" && showPassword ? "text" : type}
         name={name}
         placeholder={placeholder}
         autoComplete={autoComplete}
         className={styles.input}
+        value={value}
+        onChange={(event) => onChange?.(event.target.value)}
         disabled={disabled}
       />
-      {type === "password" ? (
+      {type === "password" && showToggle ? (
         <button
           type="button"
           aria-label={showPassword ? "隐藏密码" : "显示密码"}
@@ -229,24 +229,6 @@ function InputField({
         </button>
       ) : null}
     </label>
-  );
-}
-
-function Divider({ text }: DividerProps) {
-  return (
-    <div className={styles.divider}>
-      <span />
-      <strong>{text}</strong>
-      <span />
-    </div>
-  );
-}
-
-function SSOButton() {
-  return (
-    <button type="button" className={styles.secondaryButton}>
-      使用单点登录
-    </button>
   );
 }
 

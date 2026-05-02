@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.deps import get_current_user_id
 from app.schemas.chat import (
@@ -10,6 +10,8 @@ from app.schemas.chat import (
     EndChatResponse,
     SendMessageRequest,
 )
+from app.services.chat_service import chat_service
+from app.services.image_service import image_service
 
 router = APIRouter()
 
@@ -19,9 +21,24 @@ def create_session(
     payload: CreateChatSessionRequest,
     user_id: str = Depends(get_current_user_id),
 ) -> CreateChatSessionResponse:
+    image = image_service.get_image(payload.image_id)
+    if image is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="image not found",
+        )
+
+    if image.user_id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="image does not belong to current user",
+        )
+
+    session = chat_service.create_session(user_id=user_id, image_id=payload.image_id)
+
     return CreateChatSessionResponse(
-        session_id=f"{user_id}-session",
-        status=f"active:{payload.image_id}",
+        session_id=session.id,
+        status=session.status,
     )
 
 

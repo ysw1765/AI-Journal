@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { AppFrame } from "@/components/common/AppFrame";
 
 export const metadata: Metadata = {
-  title: "AI Diary",
-  description: "Turn image conversations into structured diaries.",
+  title: "Memory Universe",
+  description: "Enter a surreal AI diary where memories bloom into conversations.",
 };
 
 export default function RootLayout({

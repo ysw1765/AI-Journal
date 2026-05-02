@@ -1,0 +1,1494 @@
+.scene {
+  --memory-bg: #f3f5f7;
+  --memory-panel: rgba(255, 255, 255, 0.86);
+  --memory-panel-soft: rgba(255, 255, 255, 0.72);
+  --memory-border: rgba(15, 23, 42, 0.08);
+  --memory-text: #1f2937;
+  --memory-muted: #6b7280;
+  --memory-subtle: #eef2f4;
+  --memory-accent: #22c55e;
+  --memory-accent-deep: #16a34a;
+  --memory-shadow: rgba(15, 23, 42, 0.08);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  color: var(--memory-text);
+  font-family: var(--memory-font-body), "PingFang SC", "Hiragino Sans GB", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 28%),
+    linear-gradient(180deg, #f6f8fa 0%, #edf1f4 100%);
+}
+
+.scene * {
+  box-sizing: border-box;
+}
+
+.scene button,
+.scene input,
+.scene label {
+  font: inherit;
+}
+
+.sceneActive .skyGradient,
+.sceneAwakening .skyGradient {
+  filter: blur(8px);
+}
+
+.sceneAwakening .portalCore {
+  transform: scale(1.02);
+}
+
+.skyGradient,
+.corridorGlow,
+.meadowMist,
+.grainOverlay,
+.lightColumnLeft,
+.lightColumnRight {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.skyGradient {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255, 255, 255, 0.95), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.48), transparent 40%);
+  transition: filter 700ms ease;
+  animation: skyFloat 18s ease-in-out infinite alternate;
+}
+
+.corridorGlow {
+  inset: 10% 18% auto;
+  height: 48vh;
+  border-radius: 999px 999px 28% 28%;
+  background: radial-gradient(circle at 50% 24%, rgba(255, 255, 255, 0.5), transparent 62%);
+  filter: blur(28px);
+  opacity: 0.65;
+  animation: glowDrift 22s ease-in-out infinite alternate;
+}
+
+.meadowMist {
+  inset: auto -10% -18% -10%;
+  height: 44vh;
+  background:
+    radial-gradient(circle at 30% 35%, rgba(255, 255, 255, 0.5), transparent 25%),
+    radial-gradient(circle at 65% 40%, rgba(228, 244, 233, 0.38), transparent 28%),
+    linear-gradient(180deg, rgba(247, 251, 255, 0.04), rgba(250, 252, 251, 0.26));
+  filter: blur(20px);
+  animation: mistWave 16s ease-in-out infinite alternate;
+}
+
+.lightColumnLeft,
+.lightColumnRight {
+  inset: auto;
+  top: 10%;
+  width: 1px;
+  height: 36vh;
+  background: linear-gradient(180deg, transparent, rgba(148, 163, 184, 0.3), transparent);
+}
+
+.lightColumnLeft {
+  left: 12%;
+}
+
+.lightColumnRight {
+  right: 10%;
+  top: 20%;
+}
+
+.grainOverlay {
+  opacity: 0.05;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.55) 0.6px, transparent 0.6px),
+    radial-gradient(rgba(0, 0, 0, 0.28) 0.6px, transparent 0.6px);
+  background-size: 6px 6px, 8px 8px;
+  background-position: 0 0, 3px 3px;
+  mix-blend-mode: soft-light;
+  animation: grainShift 10s steps(6) infinite;
+}
+
+.topBar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.6rem 2rem 0;
+}
+
+.brandLockup,
+.brandMark,
+.topActions,
+.statusButton,
+.iconControl,
+.sendButton,
+.ghostButton,
+.archiveButton,
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brandLockup {
+  gap: 1rem;
+}
+
+.brandMark {
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.95rem;
+  color: var(--memory-accent-deep);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.16);
+}
+
+.brandMark svg,
+.iconControl svg,
+.memoryPlaceholder svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.brandKicker,
+.brandTitle,
+.eyebrow,
+.heroTitle,
+.heroText,
+.panelKicker,
+.panelTitle,
+.portalHint,
+.portalLabel,
+.portalSubLabel,
+.messageBubble p,
+.messageBubble span,
+.shardCard p,
+.shardCard h4,
+.shardStamp,
+.shardTone {
+  margin: 0;
+}
+
+.brandKicker,
+.eyebrow,
+.panelKicker {
+  color: var(--memory-muted);
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.brandTitle,
+.heroTitle,
+.panelTitle {
+  font-family: var(--memory-font-body), "PingFang SC", sans-serif;
+}
+
+.brandTitle {
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.topActions {
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mainLayout {
+  position: relative;
+  z-index: 2;
+  width: min(1380px, calc(100vw - 2rem));
+  margin: 0 auto;
+  padding: 1.5rem 0 2rem;
+}
+
+.heroColumn {
+  min-height: 38vh;
+  display: grid;
+  justify-items: center;
+  align-items: start;
+  text-align: center;
+  padding-top: 2rem;
+}
+
+.heroCopy {
+  width: min(720px, 100%);
+}
+
+.heroTitle {
+  margin: 0.65rem 0 0;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.heroText {
+  width: min(560px, 100%);
+  margin: 1rem auto 0;
+  color: var(--memory-muted);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.portalLayer {
+  position: relative;
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  margin-top: 2rem;
+  transition: transform 800ms ease, margin-top 800ms ease;
+}
+
+.portalLayerCentered {
+  margin-top: 3rem;
+}
+
+.sceneActive .portalLayer,
+.sceneAwakening .portalLayer {
+  transform: translateY(-1rem) scale(0.94);
+  margin-top: 0.5rem;
+}
+
+.portalCore {
+  position: relative;
+  width: min(16rem, 70vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  padding: 0.9rem;
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 18px 45px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(12px);
+  transition: transform 800ms ease;
+  isolation: isolate;
+}
+
+.portalGlass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  text-align: center;
+  background:
+    radial-gradient(circle at 24% 22%, rgba(255, 255, 255, 0.98), transparent 16%),
+    radial-gradient(circle at 74% 68%, rgba(186, 234, 204, 0.44), transparent 22%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12) 0 12px,
+      rgba(220, 241, 228, 0.14) 12px 24px
+    ),
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.92), transparent 24%),
+    radial-gradient(circle at 50% 55%, rgba(230, 247, 236, 0.95), rgba(214, 240, 223, 0.78) 60%, rgba(199, 233, 210, 0.52) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 -16px 30px rgba(34, 197, 94, 0.06);
+  animation: portalSurfaceShift 16s ease-in-out infinite alternate;
+}
+
+.portalGlass::before {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+}
+
+.portalGlass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 45%),
+    radial-gradient(circle at 50% 50%, transparent 58%, rgba(255, 255, 255, 0.3) 59%, transparent 61%);
+}
+
+.portalLabelGroup {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.45rem;
+  padding: 0 1.8rem;
+}
+
+.portalLabel {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.portalSubLabel {
+  color: var(--memory-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.portalOrbit,
+.portalOrbitSecondary,
+.portalShardOne,
+.portalShardTwo,
+.portalShardThree {
+  position: absolute;
+  pointer-events: none;
+}
+
+.portalOrbit,
+.portalOrbitSecondary {
+  inset: 50%;
+  border-radius: 50%;
+}
+
+.portalOrbit {
+  width: calc(100% + 1.8rem);
+  height: calc(100% + 1.8rem);
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(34, 197, 94, 0.14);
+  box-shadow:
+    0 0 0 0.4rem rgba(255, 255, 255, 0.34),
+    0 0 30px rgba(34, 197, 94, 0.08);
+  animation: portalOrbitSpin 24s linear infinite;
+}
+
+.portalOrbitSecondary {
+  width: calc(100% + 3.3rem);
+  height: calc(100% + 3.3rem);
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(148, 163, 184, 0.18);
+  animation: portalOrbitSpinReverse 32s linear infinite;
+}
+
+.portalStickerTop,
+.portalStickerSide {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.9rem;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+  color: var(--memory-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+
+.portalStickerTop {
+  top: -0.2rem;
+  right: -1.9rem;
+  transform: rotate(10deg);
+  animation: portalStickerFloat 7s ease-in-out infinite;
+}
+
+.portalStickerSide {
+  left: -2.1rem;
+  bottom: 2rem;
+  transform: rotate(-12deg);
+  animation: portalStickerFloat 6s ease-in-out infinite reverse;
+}
+
+.portalStickerTop::before,
+.portalStickerSide::before {
+  content: "";
+  position: absolute;
+  top: -0.35rem;
+  left: 50%;
+  width: 1.2rem;
+  height: 0.45rem;
+  transform: translateX(-50%) rotate(-4deg);
+  border-radius: 999px;
+  background: rgba(255, 248, 228, 0.9);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.portalPolaroid {
+  position: absolute;
+  z-index: 2;
+  right: -3.4rem;
+  top: 48%;
+  transform: translateY(-50%) rotate(12deg);
+  pointer-events: none;
+  animation: portalPolaroidFloat 8.5s ease-in-out infinite;
+}
+
+.portalPolaroidFrame {
+  display: grid;
+  gap: 0.45rem;
+  width: 5.5rem;
+  padding: 0.48rem 0.48rem 0.85rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 16px 24px rgba(15, 23, 42, 0.1);
+}
+
+.portalPolaroidImage {
+  display: block;
+  aspect-ratio: 1 / 1.05;
+  border-radius: 0.3rem;
+  background:
+    radial-gradient(circle at 28% 25%, rgba(255, 255, 255, 0.88), transparent 18%),
+    linear-gradient(145deg, rgba(230, 247, 236, 0.94), rgba(209, 233, 216, 0.78));
+}
+
+.portalPolaroidCaption {
+  display: block;
+  color: var(--memory-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: lowercase;
+}
+
+.portalShardOne,
+.portalShardTwo,
+.portalShardThree {
+  z-index: 1;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.22));
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.portalShardOne {
+  width: 2.1rem;
+  height: 1.4rem;
+  left: -1.6rem;
+  top: 1.3rem;
+  transform: rotate(-18deg);
+  animation: shardDriftOne 9s ease-in-out infinite;
+}
+
+.portalShardTwo {
+  width: 1.35rem;
+  height: 1.35rem;
+  right: -1.4rem;
+  bottom: 1rem;
+  transform: rotate(24deg);
+  animation: shardDriftTwo 7.8s ease-in-out infinite;
+}
+
+.portalShardThree {
+  width: 1.7rem;
+  height: 1rem;
+  left: 1rem;
+  bottom: -1.15rem;
+  transform: rotate(14deg);
+  animation: shardDriftThree 8.6s ease-in-out infinite;
+}
+
+.portalSparkOne,
+.portalSparkTwo {
+  position: absolute;
+  z-index: 2;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.75);
+  pointer-events: none;
+}
+
+.portalSparkOne {
+  top: 2rem;
+  left: -0.3rem;
+  animation: sparkPulse 4.5s ease-in-out infinite;
+}
+
+.portalSparkTwo {
+  right: 0.2rem;
+  bottom: 1.6rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  animation: sparkPulse 5.5s ease-in-out infinite 1.1s;
+}
+
+.portalActions {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  margin-top: 1.2rem;
+}
+
+.uploadButton,
+.sendButton,
+.ghostButton,
+.archiveButton,
+.secondaryButton,
+.statusButton {
+  justify-content: center;
+  padding: 0.82rem 1.15rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--memory-border);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--memory-text);
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+}
+
+.uploadButton:hover,
+.sendButton:hover,
+.iconControl:hover,
+.ghostButton:hover,
+.archiveButton:hover,
+.secondaryButton:hover,
+.statusButton:hover,
+.shardCard:hover,
+.memoryPreview:hover {
+  transform: translateY(-1px);
+  border-color: rgba(34, 197, 94, 0.26);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+}
+
+.uploadButton,
+.sendButton {
+  background: var(--memory-accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+.uploadButton:hover,
+.sendButton:hover {
+  background: var(--memory-accent-deep);
+}
+
+.quickActions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.secondaryButton,
+.ghostButton,
+.archiveButton,
+.statusButton {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.fileInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.portalHint {
+  color: var(--memory-muted);
+  font-size: 0.84rem;
+  max-width: 32rem;
+}
+
+.experienceGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr);
+  gap: 1.4rem;
+  align-items: start;
+  margin-top: 2rem;
+  opacity: 0.35;
+  transform: translateY(2rem) scale(0.99);
+  transition:
+    opacity 700ms ease,
+    transform 900ms ease,
+    filter 700ms ease;
+  filter: blur(6px);
+}
+
+.sceneActive .experienceGrid,
+.sceneAwakening .experienceGrid {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+.sceneHomeIdle .experienceGrid {
+  display: none;
+}
+
+.scrollPreviewSection {
+  display: grid;
+  gap: 0;
+  margin-top: 4rem;
+  padding: 0 0 4rem;
+}
+
+.previewMessageBubble p,
+.previewMessageBubble span,
+.previewToolbarTitle,
+.previewComposerHint {
+  margin: 0;
+}
+
+.previewShell {
+  position: relative;
+  width: min(960px, calc(100vw - 2rem));
+  margin: 0 auto;
+  padding: 0;
+}
+
+.previewWindow {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.8rem;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.08);
+}
+
+.previewToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.1rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.previewToolbarDots {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.previewDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #d1d5db;
+}
+
+.previewDot:first-child {
+  background: #c9ced6;
+}
+
+.previewToolbarTitle {
+  margin-left: 0.45rem;
+  color: var(--memory-muted);
+  font-size: 0.84rem;
+}
+
+.previewLayout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  min-height: 42rem;
+}
+
+.previewSidebar {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  padding: 1.1rem;
+  background: rgba(247, 249, 251, 0.96);
+  border-right: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.previewSidebarHeader,
+.previewSidebarAvatar,
+.previewThreadTop,
+.previewConversationHeader,
+.previewConversationButton {
+  display: flex;
+  align-items: center;
+}
+
+.previewSidebarHeader {
+  gap: 0.85rem;
+}
+
+.previewSidebarAvatar {
+  justify-content: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 0.95rem;
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--memory-accent-deep);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.previewSidebarTitle,
+.previewSidebarMeta,
+.previewThreadItem p,
+.previewThreadTop strong,
+.previewThreadTop span,
+.previewConversationTitle,
+.previewConversationMeta {
+  margin: 0;
+}
+
+.previewSidebarTitle,
+.previewConversationTitle {
+  color: var(--memory-text);
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.previewSidebarMeta,
+.previewConversationMeta,
+.previewThreadTop span,
+.previewThreadItem p {
+  color: var(--memory-muted);
+  font-size: 0.76rem;
+}
+
+.previewThreadList {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.previewThreadItem {
+  width: 100%;
+  padding: 0.9rem;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.previewThreadItem:hover {
+  transform: translateY(-1px);
+  border-color: rgba(34, 197, 94, 0.18);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.05);
+}
+
+.previewThreadItemActive {
+  background: rgba(234, 248, 238, 0.96);
+  border-color: rgba(34, 197, 94, 0.18);
+}
+
+.previewThreadTop {
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.previewThreadTop strong {
+  color: var(--memory-text);
+  font-size: 0.9rem;
+}
+
+.previewThreadItem p {
+  margin-top: 0.45rem;
+  line-height: 1.5;
+}
+
+.previewConversation {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-width: 0;
+}
+
+.previewConversationHeader {
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.previewConversationButton {
+  justify-content: center;
+  padding: 0.72rem 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 0.9rem;
+  background: #fff;
+  color: var(--memory-text);
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.previewConversationButton:hover {
+  transform: translateY(-1px);
+  border-color: rgba(34, 197, 94, 0.18);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
+}
+
+.previewCanvas {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3), transparent),
+    linear-gradient(180deg, rgba(243, 246, 248, 0.92), rgba(236, 241, 244, 0.88));
+  filter: none;
+  opacity: 1;
+  transform: none;
+}
+
+.previewMessageRow {
+  display: flex;
+}
+
+.previewMessageRowUser {
+  justify-content: flex-end;
+}
+
+.previewMessageBubble {
+  max-width: min(35rem, 100%);
+  padding: 1rem 1.1rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+
+.previewMessageBubbleAssistant {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.previewMessageBubbleUser {
+  background: rgba(234, 248, 238, 0.92);
+}
+
+.previewMessageBubble p {
+  line-height: 1.72;
+}
+
+.previewMessageBubble span {
+  display: inline-block;
+  margin-top: 0.55rem;
+  color: var(--memory-muted);
+  font-size: 0.75rem;
+}
+
+.previewImageCard {
+  position: relative;
+  overflow: hidden;
+  min-height: 13rem;
+  border-radius: 1.35rem;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.previewImageGlow {
+  position: absolute;
+  inset: auto 14% 12% 14%;
+  height: 2.8rem;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.14);
+  filter: blur(12px);
+}
+
+.previewImageMock {
+  position: absolute;
+  inset: 1rem;
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 28% 25%, rgba(255, 255, 255, 0.9), transparent 18%),
+    linear-gradient(140deg, #dce7df 0%, #eef4ef 45%, #d7e4dd 100%);
+}
+
+.previewComposer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.2rem 1.2rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.previewComposerHint {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border-radius: 0.95rem;
+  color: #9ca3af;
+  background: rgba(243, 245, 247, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.previewSendButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.2rem;
+  padding: 0.82rem 1.2rem;
+  border: 0;
+  border-radius: 0.95rem;
+  background: var(--memory-accent);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+
+.previewSendButton:hover {
+  background: var(--memory-accent-deep);
+  transform: translateY(-1px);
+}
+
+.chatShell,
+.archiveShell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  padding: 1.4rem;
+  background: var(--memory-panel);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 36px var(--memory-shadow);
+}
+
+.chatShell::before,
+.archiveShell::before {
+  display: none;
+}
+
+.panelHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.panelTitle {
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.statusButton {
+  gap: 0.5rem;
+  font-size: 0.82rem;
+}
+
+.statusDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--memory-accent);
+}
+
+.messages {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1rem;
+}
+
+.messageRow {
+  display: flex;
+}
+
+.messageRowUser {
+  justify-content: flex-end;
+}
+
+.messageBubble {
+  max-width: min(36rem, 100%);
+  border-radius: 1.15rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+}
+
+.messageBubbleAssistant {
+  background: #ffffff;
+}
+
+.messageBubbleUser {
+  background: #eaf8ee;
+}
+
+.messageBubble p {
+  font-size: 0.97rem;
+  line-height: 1.7;
+}
+
+.messageBubble span {
+  display: inline-block;
+  margin-top: 0.55rem;
+  color: var(--memory-muted);
+  font-size: 0.74rem;
+}
+
+.memoryPreview,
+.memoryPlaceholder {
+  position: relative;
+  border-radius: 1.2rem;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background: #ffffff;
+}
+
+.memoryPreview {
+  min-height: 15rem;
+  padding: 0;
+  cursor: pointer;
+}
+
+.memoryPreviewGlow {
+  position: absolute;
+  inset: auto 15% 12% 15%;
+  height: 26%;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.12);
+  filter: blur(22px);
+}
+
+.memoryPreviewImage {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-height: 24rem;
+  object-fit: cover;
+}
+
+.memoryPlaceholder {
+  display: grid;
+  place-items: center;
+  gap: 0.9rem;
+  min-height: 15rem;
+  padding: 2rem;
+  text-align: center;
+  color: var(--memory-muted);
+}
+
+.inputDock {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  margin-top: 1.2rem;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  background: var(--memory-subtle);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.iconControl {
+  justify-content: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  padding: 0;
+  border-radius: 0.9rem;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  color: var(--memory-muted);
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.chatInput {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--memory-text);
+}
+
+.chatInput::placeholder {
+  color: #9ca3af;
+}
+
+.shardField {
+  position: relative;
+  display: grid;
+  gap: 0.95rem;
+}
+
+.shardCard {
+  position: relative;
+  display: grid;
+  width: 100%;
+  text-align: left;
+  gap: 0.45rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+  cursor: pointer;
+  animation: shardFloat 7s ease-in-out infinite;
+}
+
+.shardCard:nth-child(2n) {
+  margin-left: 1.2rem;
+}
+
+.shardCard:nth-child(3n) {
+  margin-right: 1.6rem;
+}
+
+.shardStamp,
+.shardTone {
+  color: var(--memory-muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+}
+
+.shardCard h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.shardCard p {
+  color: #374151;
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+
+@keyframes portalBreath {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+@keyframes portalSurfaceShift {
+  0% {
+    transform: rotate(0deg) scale(1);
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+
+  100% {
+    transform: rotate(4deg) scale(1.02);
+    background-position:
+      0 0,
+      6px -8px,
+      28px 14px,
+      0 0,
+      0 0;
+  }
+}
+
+@keyframes portalOrbitSpin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes portalOrbitSpinReverse {
+  from {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes portalStickerFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+@keyframes portalPolaroidFloat {
+  0%,
+  100% {
+    transform: translateY(-50%) rotate(12deg);
+  }
+
+  50% {
+    transform: translateY(calc(-50% - 8px)) rotate(9deg);
+  }
+}
+
+@keyframes shardDriftOne {
+  0%,
+  100% {
+    transform: rotate(-18deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(-12deg) translateY(-8px);
+  }
+}
+
+@keyframes shardDriftTwo {
+  0%,
+  100% {
+    transform: rotate(24deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(18deg) translateY(-6px);
+  }
+}
+
+@keyframes shardDriftThree {
+  0%,
+  100% {
+    transform: rotate(14deg) translateY(0);
+  }
+
+  50% {
+    transform: rotate(8deg) translateY(6px);
+  }
+}
+
+@keyframes sparkPulse {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+@keyframes haloDrift {
+  0% {
+    transform: translate3d(-1rem, 0, 0) scale(0.96);
+  }
+
+  100% {
+    transform: translate3d(1rem, -0.8rem, 0) scale(1.03);
+  }
+}
+
+@keyframes skyFloat {
+  0% {
+    transform: translate3d(-1.2%, 0, 0) scale(1);
+  }
+
+  100% {
+    transform: translate3d(1.4%, -1.5%, 0) scale(1.03);
+  }
+}
+
+@keyframes glowDrift {
+  0% {
+    transform: translate3d(-1.5%, 0, 0);
+    opacity: 0.58;
+  }
+
+  100% {
+    transform: translate3d(2%, -2%, 0);
+    opacity: 0.72;
+  }
+}
+
+@keyframes mistWave {
+  0% {
+    transform: translate3d(-1.5%, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(1%, -1.2%, 0) scale(1.02);
+  }
+
+  100% {
+    transform: translate3d(2%, 0.8%, 0) scale(1.03);
+  }
+}
+
+@keyframes grainShift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  25% {
+    transform: translate3d(0.3%, -0.2%, 0);
+  }
+
+  50% {
+    transform: translate3d(-0.2%, 0.25%, 0);
+  }
+
+  75% {
+    transform: translate3d(0.2%, 0.15%, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes shardFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-0.45rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skyGradient,
+  .corridorGlow,
+  .meadowMist,
+  .grainOverlay,
+  .portalCore,
+  .shardCard {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .experienceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .archiveShell {
+    order: 2;
+  }
+
+  .previewShell {
+    width: min(100%, calc(100vw - 1rem));
+  }
+
+  .previewLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .previewSidebar {
+    border-right: 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+}
+
+@media (max-width: 720px) {
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.2rem 1rem 0;
+  }
+
+  .topActions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .mainLayout {
+    width: min(100vw - 1rem, 100%);
+    padding-bottom: 1rem;
+  }
+
+  .heroColumn {
+    min-height: auto;
+    padding-top: 1rem;
+  }
+
+  .heroTitle {
+    font-size: clamp(2.5rem, 12vw, 3.6rem);
+  }
+
+  .portalCore {
+    width: min(15rem, 82vw);
+  }
+
+  .portalStickerTop {
+    right: -0.8rem;
+  }
+
+  .portalStickerSide {
+    left: -0.7rem;
+    bottom: 1.2rem;
+  }
+
+  .portalPolaroid {
+    right: -1.2rem;
+    top: auto;
+    bottom: -2.3rem;
+    transform: rotate(10deg);
+  }
+
+  .chatShell,
+  .archiveShell {
+    padding: 1rem;
+    border-radius: 1.5rem;
+  }
+
+  .panelHeader {
+    flex-direction: column;
+  }
+
+  .inputDock {
+    grid-template-columns: 1fr;
+  }
+
+  .scrollPreviewSection {
+    margin-top: 3rem;
+    padding-bottom: 2rem;
+  }
+
+  .previewCanvas,
+  .previewComposer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .previewToolbar,
+  .previewConversationHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .previewComposer {
+    grid-template-columns: 1fr;
+  }
+
+  .iconControl,
+  .sendButton,
+  .previewSendButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .shardCard:nth-child(2n),
+  .shardCard:nth-child(3n) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

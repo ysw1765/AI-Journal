@@ -137,7 +137,7 @@ function LoginForm({ showPassword, setShowPassword }: LoginFormProps) {
       });
 
       setAccessToken(response.access_token, rememberMe);
-      router.replace("/upload");
+      router.replace("/");
       router.refresh();
     } catch (error) {
       const message =

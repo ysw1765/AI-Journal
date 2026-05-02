@@ -6,10 +6,10 @@ import { usePathname } from "next/navigation";
 
 export function AppFrame({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isImmersiveChat = pathname.startsWith("/chat/");
-  const isAuthLanding = pathname === "/" || pathname === "/login";
+  const isImmersiveScene = pathname === "/" || pathname.startsWith("/chat/");
+  const isAuthLanding = pathname === "/login";
 
-  if (isImmersiveChat || isAuthLanding) {
+  if (isImmersiveScene || isAuthLanding) {
     return children;
   }
 

@@ -1,5 +1,5 @@
-import { LoginExperience } from "@/components/auth/LoginExperience";
+import { MemoryUniverseExperience } from "@/components/chat/MemoryUniverseExperience";
 
 export default function HomePage() {
-  return <LoginExperience />;
+  return <MemoryUniverseExperience mode="home" />;
 }
